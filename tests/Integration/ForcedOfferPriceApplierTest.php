@@ -36,6 +36,7 @@ final class ForcedOfferPriceApplierTest extends \WP_UnitTestCase
         self::assertSame('89.9', $applier->filterPrice('100', $product));
         self::assertSame('120', $applier->filterRegularPrice('100', $product));
         self::assertTrue($applier->filterIsOnSale(false, $product));
+        self::assertContains($product->get_id(), $applier->filterOnSaleProductIds([]));
     }
 
     private function createSimpleProduct(float $price): WC_Product

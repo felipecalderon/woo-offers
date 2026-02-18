@@ -24,6 +24,7 @@ final class ForcedOfferPriceApplier
         add_filter('woocommerce_product_variation_get_sale_price', [$this, 'filterSalePrice'], 9999, 2);
         add_filter('woocommerce_product_is_on_sale', [$this, 'filterIsOnSale'], 9999, 2);
         add_filter('woocommerce_product_variation_is_on_sale', [$this, 'filterIsOnSale'], 9999, 2);
+        add_filter('woocommerce_get_product_ids_on_sale', [$this, 'filterOnSaleProductIds'], 9999);
         add_action('woocommerce_before_calculate_totals', [$this, 'applyCartPrice'], 9999);
     }
 
@@ -63,6 +64,21 @@ final class ForcedOfferPriceApplier
     public function filterIsOnSale(bool $onSale, WC_Product $product): bool
     {
         return $this->evaluator->forcedPriceFor($product) !== null ? true : $onSale;
+    }
+
+    /**
+     * @param int[] $ids
+     * @return int[]
+     */
+    public function filterOnSaleProductIds(array $ids): array
+    {
+        $forcedIds = $this->evaluator->forcedOnSaleProductIds();
+
+        if ($forcedIds === []) {
+            return $ids;
+        }
+
+        return array_values(array_unique(array_map('intval', array_merge($ids, $forcedIds))));
     }
 
     public function applyCartPrice(WC_Cart $cart): void

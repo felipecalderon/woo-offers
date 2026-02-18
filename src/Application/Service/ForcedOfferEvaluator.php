@@ -60,6 +60,27 @@ final class ForcedOfferEvaluator
         return (string) wc_format_decimal((string) $regularPrice, wc_get_price_decimals());
     }
 
+    /**
+     * @return int[]
+     */
+    public function forcedOnSaleProductIds(): array
+    {
+        $ids = [];
+
+        foreach (array_keys($this->rules()) as $productId) {
+            $product = wc_get_product($productId);
+            if (!$product instanceof WC_Product) {
+                continue;
+            }
+
+            if ($this->forcedPriceFor($product) !== null) {
+                $ids[] = $productId;
+            }
+        }
+
+        return $ids;
+    }
+
     private function currentBasePrice(WC_Product $product): ?float
     {
         $rawPrice = (string) $product->get_price('edit');
