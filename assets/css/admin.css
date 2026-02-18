@@ -1,0 +1,57 @@
+﻿.woo-offers-admin-form {
+    margin-top: 16px;
+}
+
+.woo-offers-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.woo-offers-table-wrap {
+    overflow-x: auto;
+}
+
+.woo-offers-table td,
+.woo-offers-table th {
+    vertical-align: middle;
+}
+
+.woo-col-product {
+    min-width: 280px;
+}
+
+.woo-offers-table input[type="number"] {
+    width: 110px;
+}
+
+.woo-offers-status--applied {
+    color: #0f5132;
+    font-weight: 600;
+}
+
+.woo-offers-status--invalid {
+    color: #842029;
+    font-weight: 600;
+}
+
+.woo-offers-status--unknown {
+    color: #495057;
+}
+
+.woo-offers-row-invalid {
+    background: #fff5f5;
+}
+
+@media (max-width: 900px) {
+    .woo-offers-toolbar {
+        align-items: stretch;
+    }
+
+    #woo-offers-product-search {
+        width: 100% !important;
+        min-width: 240px;
+    }
+}
