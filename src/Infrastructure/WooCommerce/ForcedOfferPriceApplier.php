@@ -6,6 +6,7 @@ namespace WooOffers\Infrastructure\WooCommerce;
 
 use WC_Cart;
 use WC_Product;
+use WP_Query;
 use WooOffers\Application\Service\ForcedOfferEvaluator;
 
 final class ForcedOfferPriceApplier
@@ -26,6 +27,7 @@ final class ForcedOfferPriceApplier
         add_filter('woocommerce_product_variation_is_on_sale', [$this, 'filterIsOnSale'], 9999, 2);
         add_filter('woocommerce_get_product_ids_on_sale', [$this, 'filterOnSaleProductIds'], 9999);
         add_action('woocommerce_before_calculate_totals', [$this, 'applyCartPrice'], 9999);
+        add_action('pre_get_posts', [$this, 'injectForcedOnSaleIdsInQueries'], 9999);
     }
 
     /**
@@ -63,7 +65,7 @@ final class ForcedOfferPriceApplier
 
     public function filterIsOnSale(bool $onSale, WC_Product $product): bool
     {
-        return $this->evaluator->forcedPriceFor($product) !== null ? true : $onSale;
+        return $this->evaluator->isForcedOnSale($product) ? true : $onSale;
     }
 
     /**
@@ -106,5 +108,32 @@ final class ForcedOfferPriceApplier
                 }
             }
         }
+    }
+
+    public function injectForcedOnSaleIdsInQueries(WP_Query $query): void
+    {
+        if (is_admin() && !wp_doing_ajax()) {
+            return;
+        }
+
+        $postIn = $query->get('post__in');
+        if (!is_array($postIn) || !in_array(0, array_map('intval', $postIn), true)) {
+            return;
+        }
+
+        $postType = $query->get('post_type');
+        if (
+            $postType !== 'product'
+            && !(is_array($postType) && in_array('product', $postType, true))
+        ) {
+            return;
+        }
+
+        $forcedIds = $this->evaluator->forcedOnSaleProductIds();
+        if ($forcedIds === []) {
+            return;
+        }
+
+        $query->set('post__in', array_values(array_unique(array_map('intval', array_merge($postIn, $forcedIds)))));
     }
 }

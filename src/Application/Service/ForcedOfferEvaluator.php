@@ -60,6 +60,28 @@ final class ForcedOfferEvaluator
         return (string) wc_format_decimal((string) $regularPrice, wc_get_price_decimals());
     }
 
+    public function isForcedOnSale(WC_Product $product): bool
+    {
+        if ($this->forcedPriceFor($product) !== null) {
+            return true;
+        }
+
+        if ($product->is_type('variable')) {
+            foreach ($product->get_children() as $childId) {
+                $child = wc_get_product($childId);
+                if (!$child instanceof WC_Product) {
+                    continue;
+                }
+
+                if ($this->forcedPriceFor($child) !== null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @return int[]
      */
@@ -75,6 +97,11 @@ final class ForcedOfferEvaluator
 
             if ($this->forcedPriceFor($product) !== null) {
                 $ids[] = $productId;
+
+                $parentId = $product->get_parent_id();
+                if ($parentId > 0) {
+                    $ids[] = $parentId;
+                }
             }
         }
 

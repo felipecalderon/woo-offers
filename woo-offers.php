@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Woo Offers
+ * Plugin Name: Ofertas de productos
  * Plugin URI:  https://example.com/woo-offers
  * Description: Plugin base profesional para extender WooCommerce con ofertas y reglas comerciales.
- * Version:     0.1.3
+ * Version:     0.1.5
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Author:      Felipe Calderon
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WOO_OFFERS_VERSION', '0.1.3');
+define('WOO_OFFERS_VERSION', '0.1.5');
 define('WOO_OFFERS_FILE', __FILE__);
 define('WOO_OFFERS_PATH', plugin_dir_path(__FILE__));
 define('WOO_OFFERS_URL', plugin_dir_url(__FILE__));
